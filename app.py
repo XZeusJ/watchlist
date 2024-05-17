@@ -15,9 +15,9 @@ else:  # 否则使用四个斜线
     prefix = 'sqlite:////'
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////' + os.path.join(app.root_path, 'data.db')
+# app.config['SQLALCHEMY_DATABASE_URI'] = prefix + os.path.join(os.path.dirname(app.root_path), os.getenv('DATABASE_FILE', 'data.db'))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # 关闭对模型修改的监控
-app.config['SECRET_KEY'] = 'dev'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev')
 db = SQLAlchemy(app) # 初始化扩展，传入程序实例 app
 login_manager = LoginManager(app)  # 实例化扩展类
 login_manager.login_view = 'login' # 视图保护，重定向至login页面
@@ -235,19 +235,3 @@ def settings():
         return redirect(url_for('index'))
 
     return render_template('settings.html')
-
-""" 两个基础路由示例
-@app.route('/user/<name>')
-def user_page(name):
-    return f'User:{escape(name)}'
-
-@app.route('/test')
-def test_url_for():
-    print(url_for('hello'))
-    print(url_for('user_page', name='xzj'))
-    print(url_for('user_page', name='hym'))
-    print(url_for('test_url_for'))
-
-    print(url_for('test_url_for', num=2))
-    return 'Test page'
-"""
